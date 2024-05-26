@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datei-Upload und -Download</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1 id="headline">DATA SHARE</h1>
+    <form id="uploadForm">
+        <input type="file" id="fileInput" multiple >
+        <button id="Confirm-button" type="submit">Dateien hochladen</button>
+    </form>
+    <div id="progressContainer"></div>
+
+    <div id="file-container">
+        <h2 id="file-headline">Verfügbare Dateien</h2>
+        <table>
+            <thead>
+              <tr>
+                <th>Dateiname</th>
+                <th>Dateigröße</th>
+                <th>Aktion</th>
+              </tr>
+            </thead>
+            <tbody id="fileList">
+              <!-- Dateien werden hier geladen -->
+            </tbody>
+          </table>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+

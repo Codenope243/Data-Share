@@ -1,0 +1,132 @@
+body {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-around;
+    font-family: Arial, sans-serif;
+    margin: 0px;
+    background-color: rgb(235, 235, 235);
+    overflow: hidden;
+}
+
+#headline{
+    color: rgba(87, 148, 133, 0.952);
+}
+
+h2 {
+    color: #333;
+}
+
+#uploadForm {
+    display: flex;
+    flex-direction: column;
+    
+    margin-bottom: 20px;
+}
+
+#fileInput{
+    display: flex;
+    align-items: center;
+    height: 90px;
+    border-radius:15px ;
+}
+
+::-webkit-file-upload-button{
+    height: 100%;
+    width: 100%;
+    outline: none;
+    border: none;
+    background-color: transparent;
+    background-color: rgba(0, 81, 255, 0.267);
+    color: #45a049;
+    cursor: pointer;
+}
+
+#Confirm-button {
+    align-self: center;
+    height: 45px;
+    width: 80%;
+    margin-top: 10px;
+    background-color: green;
+    color: white;
+    border: none;
+    border-radius: 15px;
+}
+
+.progress-bar {
+    width: 100%;
+    background-color: #f3f3f3;
+    border-radius: 5px;
+    margin: 10px 0;
+}
+
+.progress {
+    width: 0%;
+    height: 20px;
+    background-color: #4CAF50;
+    text-align: center;
+    line-height: 20px;
+    color: black;
+    border-radius: 5px;
+}
+
+.cancel-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.cancel-button:hover {
+    background-color: #e53935;
+}
+
+
+#file-container{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    border: solid 1px ;
+    overflow: scroll;
+    margin-bottom: -90px;
+}
+
+#file-container::-webkit-scrollbar{
+    width: 0px;
+}
+
+#file-headline{
+    text-align: center;
+}
+
+table{
+    width: 80%;
+    border: solid 1px black;
+    border-collapse: collapse;
+  
+}
+
+tr{
+    border: solid 1px black;
+}
+
+td{
+    text-align: center;
+}
+
+.download-btn {
+    display: inline-block;
+    padding: 8px 12px;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
