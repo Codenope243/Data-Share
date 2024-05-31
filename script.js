@@ -1,3 +1,31 @@
+const fs = require('fs');
+const path = require('path');
+const archiver = require('archiver');
+const fse = require('fs-extra');
+
+// Funktion zum Komprimieren eines Ordners
+async function komprimiereOrdner(ordnerPfad) {
+    return new Promise((resolve, reject) => {
+        const output = fs.createWriteStream(`${ordnerPfad}.zip`);
+        const archive = archiver('zip', {
+            zlib: { level: 9 } // Höchste Komprimierungsstufe
+        });
+
+        output.on('close', () => {
+            console.log(`Komprimierung abgeschlossen. ${archive.pointer()} Bytes wurden geschrieben.`);
+            resolve(`${ordnerPfad}.zip`);
+        });
+
+        archive.on('error', (err) => {
+            reject(err);
+        });
+
+        archive.pipe(output);
+        archive.directory(ordnerPfad, false);
+        archive.finalize();
+    });
+}
+
 // Firebase-Konfiguration
 const firebaseConfig = {
     apiKey: "AIzaSyBUxod-6V4LPWMkcBs0tSc8euATu2FeSGk",
@@ -27,7 +55,23 @@ document.getElementById('uploadForm').addEventListener('submit', async (event) =
         }
 
         currentUploads++;
-        uploadFile(file).finally(() => currentUploads--);
+        const filePath = file.webkitRelativePath || file.name;
+
+        try {
+            const stats = await fse.stat(filePath);
+            if (stats.isDirectory()) {
+                console.log(`${filePath} ist ein Ordner. Komprimierung wird gestartet.`);
+                const zipPath = await komprimiereOrdner(filePath);
+                const zipFile = new File([await fse.readFile(zipPath)], `${file.name}.zip`, { type: 'application/zip' });
+                await uploadFile(zipFile);
+            } else {
+                await uploadFile(file);
+            }
+        } catch (error) {
+            console.error(`Fehler beim Verarbeiten der Datei ${file.name}:`, error);
+        } finally {
+            currentUploads--;
+        }
     }
 });
 
@@ -135,6 +179,3 @@ async function loadFiles() {
 }
 
 window.onload = loadFiles;
-
-
-
