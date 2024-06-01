@@ -1,31 +1,3 @@
-const fs = require('fs');
-const path = require('path');
-const archiver = require('archiver');
-const fse = require('fs-extra');
-
-// Funktion zum Komprimieren eines Ordners
-async function komprimiereOrdner(ordnerPfad) {
-    return new Promise((resolve, reject) => {
-        const output = fs.createWriteStream(`${ordnerPfad}.zip`);
-        const archive = archiver('zip', {
-            zlib: { level: 9 } // Höchste Komprimierungsstufe
-        });
-
-        output.on('close', () => {
-            console.log(`Komprimierung abgeschlossen. ${archive.pointer()} Bytes wurden geschrieben.`);
-            resolve(`${ordnerPfad}.zip`);
-        });
-
-        archive.on('error', (err) => {
-            reject(err);
-        });
-
-        archive.pipe(output);
-        archive.directory(ordnerPfad, false);
-        archive.finalize();
-    });
-}
-
 // Firebase-Konfiguration
 const firebaseConfig = {
     apiKey: "AIzaSyBUxod-6V4LPWMkcBs0tSc8euATu2FeSGk",
@@ -45,31 +17,76 @@ const db = firebase.firestore();
 const MAX_CONCURRENT_UPLOADS = 3;
 let currentUploads = 0;
 
-document.getElementById('uploadForm').addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const files = document.getElementById('fileInput').files;
+document.querySelectorAll('input[name="uploadType"]').forEach((elem) => {
+    elem.addEventListener("change", function(event) {
+        const value = event.target.value;
+        if (value === "file") {
+            document.getElementById('fileInput').style.display = 'block';
+            document.getElementById('folderInput').style.display = 'none';
+        } else {
+            document.getElementById('fileInput').style.display = 'none';
+            document.getElementById('folderInput').style.display = 'block';
+        }
+    });
+});
+
+document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+document.getElementById('folderInput').addEventListener('change', handleFileSelect);
+
+function handleFileSelect(event) {
+    const files = event.target.files;
+    const uploadingFilesContainer = document.getElementById('uploading-files-container');
+
+    // Entferne nur die Dateicontainer, nicht die Überschrift
+    const existingContainers = uploadingFilesContainer.querySelectorAll('.file-container');
+    existingContainers.forEach(container => container.remove());
 
     for (const file of files) {
+        createFileContainer(file.name);
+    }
+}
+
+document.getElementById('uploadForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const uploadType = document.querySelector('input[name="uploadType"]:checked').value;
+    let files;
+    if (uploadType === 'file') {
+        files = document.getElementById('fileInput').files;
+    } else {
+        files = document.getElementById('folderInput').files;
+    }
+
+    if (uploadType === 'folder') {
+        const zip = new JSZip();
+        const firstFilePath = files[0].webkitRelativePath || files[0].name;
+        const folderName = firstFilePath.split('/')[0];
+
+        for (const file of files) {
+            const filePath = file.webkitRelativePath || file.name;
+            zip.file(filePath, file);
+        }
+
         while (currentUploads >= MAX_CONCURRENT_UPLOADS) {
             await new Promise(resolve => setTimeout(resolve, 100)); // 100ms warten
         }
 
         currentUploads++;
-        const filePath = file.webkitRelativePath || file.name;
-
-        try {
-            const stats = await fse.stat(filePath);
-            if (stats.isDirectory()) {
-                console.log(`${filePath} ist ein Ordner. Komprimierung wird gestartet.`);
-                const zipPath = await komprimiereOrdner(filePath);
-                const zipFile = new File([await fse.readFile(zipPath)], `${file.name}.zip`, { type: 'application/zip' });
-                await uploadFile(zipFile);
-            } else {
-                await uploadFile(file);
+        zip.generateAsync({ type: 'blob' }).then(async (content) => {
+            const zipFile = new File([content], `${folderName}.zip`, { type: 'application/zip' });
+            await uploadFile(zipFile);
+            currentUploads--;
+        }).catch((error) => {
+            console.error('Fehler beim Komprimieren der Dateien:', error);
+            currentUploads--;
+        });
+    } else {
+        for (const file of files) {
+            while (currentUploads >= MAX_CONCURRENT_UPLOADS) {
+                await new Promise(resolve => setTimeout(resolve, 100)); // 100ms warten
             }
-        } catch (error) {
-            console.error(`Fehler beim Verarbeiten der Datei ${file.name}:`, error);
-        } finally {
+
+            currentUploads++;
+            await uploadFile(file);
             currentUploads--;
         }
     }
@@ -115,7 +132,6 @@ async function uploadFile(file) {
                     size: file.size // Die Dateigröße wird hier hinzugefügt
                 });
 
-                alert(`Datei ${file.name} erfolgreich hochgeladen`);
                 loadFiles();
                 progressBarContainer.remove();
             }
@@ -126,20 +142,30 @@ async function uploadFile(file) {
     }
 }
 
-function formatFileSize(bytes) {
-    if (bytes === undefined || bytes === null) return 'Unbekannt';
-    if (bytes < 1024) return bytes + ' B';
-    let k = 1024,
-        sizes = ['KB', 'MB', 'GB', 'TB'],
-        i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i - 1];
+function createFileContainer(fileName) {
+    const fileContainer = document.createElement('div');
+    fileContainer.classList.add('file-container');
+    
+    const fileNameParagraph = document.createElement('p');
+    fileNameParagraph.classList.add('fileName');
+    fileNameParagraph.textContent = fileName;
+    
+    const removeButton = document.createElement('button');
+    removeButton.classList.add('uploade-file-remove-button');
+    removeButton.addEventListener('click', () => {
+        fileContainer.remove();
+    });
+    
+    fileContainer.appendChild(fileNameParagraph);
+    fileContainer.appendChild(removeButton);
+    document.getElementById('uploading-files-container').appendChild(fileContainer);
 }
+
 
 async function loadFiles() {
     try {
         const snapshot = await db.collection('files').get();
         const fileList = document.getElementById('fileList');
-        fileList.innerHTML = '';
 
         snapshot.forEach(doc => {
             const file = doc.data();
@@ -148,11 +174,9 @@ async function loadFiles() {
 
             // Name
             const fileNameCell = document.createElement('td');
-            const fileNameLink = document.createElement('a');
-            fileNameLink.href = file.url;
-            fileNameLink.textContent = file.name;
-            fileNameLink.target = '_blank';
-            fileNameCell.appendChild(fileNameLink);
+            const fileNameText = document.createElement('p');
+            fileNameText.textContent = file.name;
+            fileNameCell.appendChild(fileNameText);
             listItem.appendChild(fileNameCell);
 
             // Größe
@@ -163,9 +187,17 @@ async function loadFiles() {
             // Download-Button
             const downloadButtonCell = document.createElement('td');
             const downloadButton = document.createElement('button');
+            downloadButton.classList.add('downloade-button');
             downloadButton.textContent = 'Download';
+            downloadButton.setAttribute('data-download-url', file.url);
             downloadButton.onclick = function() {
-                window.open(file.url, '_blank');
+                const url = downloadButton.getAttribute('data-download-url');
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = file.name;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             };
             downloadButtonCell.appendChild(downloadButton);
             listItem.appendChild(downloadButtonCell);
@@ -178,4 +210,14 @@ async function loadFiles() {
     }
 }
 
-window.onload = loadFiles;
+function formatFileSize(bytes) {
+    if (bytes === undefined || bytes === null) return 'Unbekannt';
+    if (bytes < 1024) return bytes + ' B';
+    let k = 1024,
+        sizes = ['KB', 'MB', 'GB', 'TB'],
+        i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i - 1];
+}
+
+// Initiales Laden der Dateien
+document.addEventListener('DOMContentLoaded', loadFiles);

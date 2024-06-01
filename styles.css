@@ -1,70 +1,74 @@
 body {
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
     height: 100vh;
     display: flex;
     align-items: center;
     flex-direction: column;
     justify-content: space-around;
-    font-family: Arial, sans-serif;
     margin: 0px;
-    background-color: rgb(235, 235, 235);
+    background-color: rgb(23,22,23);
+    color: rgb(246,246,246);
     overflow: hidden;
 }
 
 #headline{
-    color: rgba(87, 148, 133, 0.952);
-}
-
-h2 {
-    color: #333;
+    color: rgb(183,255,26);
 }
 
 #uploadForm {
     display: flex;
     flex-direction: column;
-    
     margin-bottom: 20px;
 }
 
+
+#folderInput,
 #fileInput{
     display: flex;
     align-items: center;
     height: 90px;
+    width: 253px;
     border-radius:15px ;
+    font-size: 25px;
 }
 
 ::-webkit-file-upload-button{
     height: 100%;
     width: 100%;
-    outline: none;
     border: none;
-    background-color: transparent;
-    background-color: rgba(0, 81, 255, 0.267);
-    color: #45a049;
+    background-color: rgb(246,246,246);
+    color: black;
     cursor: pointer;
 }
+
 
 #Confirm-button {
     align-self: center;
     height: 45px;
     width: 80%;
     margin-top: 10px;
-    background-color: green;
-    color: white;
+    background-color: rgb(183,255,26);
+    color: black;
     border: none;
     border-radius: 15px;
+    cursor: pointer;
+    filter: drop-shadow(0px 0px 80px rgb(87, 165, 13));
+    transition: ease-in-out 0.35s;
 }
 
-.progress-bar {
-    width: 100%;
-    background-color: #f3f3f3;
-    border-radius: 5px;
-    margin: 10px 0;
+#Confirm-button:hover{
+    transform: scale(104%);
+}
+
+#progressContainer{
+    width: 600px;
 }
 
 .progress {
     width: 0%;
-    height: 20px;
-    background-color: #4CAF50;
+    height: 30px;
+    background-color: #3ab83e;
     text-align: center;
     line-height: 20px;
     color: black;
@@ -75,14 +79,64 @@ h2 {
     background-color: #f44336;
     color: white;
     border: none;
+    border-radius: 5px;
     padding: 5px 10px;
     cursor: pointer;
 }
 
-.cancel-button:hover {
-    background-color: #e53935;
+
+#uploading-files-container{
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    align-items: center;
+    margin-left: 73%;
+    margin-top: 1%;
+    margin-bottom: 20%;
+    height:625px;
+    width: 500px;
+    border-radius: 20px;
+    overflow: scroll;
+    background-color: rgb(29,29,28);
 }
 
+#uploading-files-container::-webkit-scrollbar{
+    width: 0;
+    height: 0;
+}
+
+#uploading-files-headline{
+    text-align: center;
+    color: rgb(246,246,246);
+}
+
+.file-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 10px;
+    width: 98%;
+    height: 40px;
+    margin-top: 5px;
+    background-color:rgb(44,45,45) ;
+}
+
+.fileName{
+    margin-left: 5px;
+    flex-grow: 1;
+}
+
+.uploade-file-remove-button {
+    background-color: red;
+    background-image: url(bilder/entfernen\ hintergrund\ icon.png);
+    background-size: cover;
+    border: none;
+    border-radius: 5px;
+    height: 20px;
+    width: 20px;
+    cursor: pointer;
+    margin-right: 10px;
+}
 
 #file-container{
     position: relative;
@@ -90,9 +144,10 @@ h2 {
     flex-direction: column;
     align-items: center;
     width: 100%;
-    border: solid 1px ;
+    height: 400px;
     overflow: scroll;
     margin-bottom: -90px;
+    background-color: rgb(29,29,28);
 }
 
 #file-container::-webkit-scrollbar{
@@ -101,32 +156,50 @@ h2 {
 
 #file-headline{
     text-align: center;
+    color:rgb(246,246,246);
 }
 
 table{
-    width: 80%;
-    border: solid 1px black;
+    width: 90%;
     border-collapse: collapse;
-  
+    border-radius: 10px;
+    background-color: rgb(44,45,45);
+    color: rgb(125,125,125);
+    margin-bottom: 30px;
+}
+
+th{
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 tr{
     border: solid 1px black;
+    transition: ease-in-out 0.3s;
 }
+
+tr:hover{
+    transform: scale(102%);
+    color: rgb(246,246,246);
+}
+
 
 td{
     text-align: center;
 }
 
-.download-btn {
-    display: inline-block;
-    padding: 8px 12px;
-    color: white;
-    background-color: #007bff;
+
+.downloade-button{
     border: none;
-    text-align: center;
-    text-decoration: none;
-    font-size: 14px;
+    border-radius: 3px;
+    margin: 5px;
+    padding: 5px;
+    font-size: medium;
+    background-color: rgb(183,255,26);
     cursor: pointer;
-    border-radius: 4px;
-  }
+    transition: ease-in-out 0.25s;
+}
+
+.downloade-button:hover{
+    transform: scale(105%);
+}
