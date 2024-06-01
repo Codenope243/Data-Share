@@ -24,23 +24,39 @@ body {
 
 #switch-container{
     display: flex;
+    justify-content: space-between;
     align-items: center;
     align-self: center;
     height: 20px;
     width: 150px;
+    padding: 2px;
     margin-bottom: 10px;
     border-radius: 50px;
-    background-color: white;
+    background-color: rgb(197, 219, 100);
     cursor: pointer;
     transition: ease-in-out 0.3s;
 }
 
 #switch{
+    position: absolute;
     height: 18px;
     width: 18px;
     border-radius: 50px;
     background-color: gray;
     transition: ease-in-out 0.4s;
+}
+
+.switch-icons{
+    height: auto;
+    width: 14px;
+    margin-left: 3px;
+    margin-right: 3px;
+}
+
+.switch-icons,
+#switch-container,
+#switch{
+    transform: scale(115%);
 }
 
 #folderInput,
