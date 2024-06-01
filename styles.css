@@ -22,11 +22,29 @@ body {
     margin-bottom: 20px;
 }
 
+#switch-container{
+    display: flex;
+    align-items: center;
+    align-self: center;
+    height: 20px;
+    width: 150px;
+    margin-bottom: 10px;
+    border-radius: 50px;
+    background-color: white;
+    cursor: pointer;
+    transition: ease-in-out 0.3s;
+}
+
+#switch{
+    height: 18px;
+    width: 18px;
+    border-radius: 50px;
+    background-color: gray;
+    transition: ease-in-out 0.4s;
+}
 
 #folderInput,
 #fileInput{
-    display: flex;
-    align-items: center;
     height: 90px;
     width: 253px;
     border-radius:15px ;

@@ -12,14 +12,13 @@
 <body>
     <h1 id="headline">DATA SHARE</h1>
     <form id="uploadForm">
-        <label>
-            <input type="radio" name="uploadType" value="file" checked> Dateien hochladen
-        </label>
-        <label>
-            <input type="radio" name="uploadType" value="folder"> Ordner hochladen
-        </label>
-        <input type="file" id="fileInput" multiple>
-        <input type="file" id="folderInput" webkitdirectory style="display: none;">
+
+        <div id="switch-container" onclick="toggleSwitch()">
+            <div id="switch" style="margin-left: 2px;"></div>
+        </div>
+
+        <input type="file" id="fileInput" style="display: none;" multiple>
+        <input type="file" id="folderInput" style="display: block;" webkitdirectory >
         <button id="Confirm-button" type="submit">Dateien hochladen</button>
     </form>
 

@@ -17,18 +17,26 @@ const db = firebase.firestore();
 const MAX_CONCURRENT_UPLOADS = 3;
 let currentUploads = 0;
 
-document.querySelectorAll('input[name="uploadType"]').forEach((elem) => {
-    elem.addEventListener("change", function(event) {
-        const value = event.target.value;
-        if (value === "file") {
-            document.getElementById('fileInput').style.display = 'block';
-            document.getElementById('folderInput').style.display = 'none';
-        } else {
-            document.getElementById('fileInput').style.display = 'none';
-            document.getElementById('folderInput').style.display = 'block';
-        }
-    });
-});
+let uploadType = "";
+function toggleSwitch() {
+    const switchBody = document.getElementById("switch");
+    const fileInput = document.getElementById("fileInput");
+    const folderInput = document.getElementById("folderInput");
+
+    if (switchBody.style.marginLeft == "2px") {
+        folderInput.style.display = 'none';
+        fileInput.style.display = 'block';
+        switchBody.style.marginLeft = "130px";
+        uploadType = "file" 
+    } else {
+        fileInput.style.display = 'none';
+        folderInput.style.display = 'block';
+        switchBody.style.marginLeft = "2px";
+        uploadType = "folder" 
+    }
+}
+
+
 
 document.getElementById('fileInput').addEventListener('change', handleFileSelect);
 document.getElementById('folderInput').addEventListener('change', handleFileSelect);
@@ -48,7 +56,6 @@ function handleFileSelect(event) {
 
 document.getElementById('uploadForm').addEventListener('submit', async (event) => {
     event.preventDefault();
-    const uploadType = document.querySelector('input[name="uploadType"]:checked').value;
     let files;
     if (uploadType === 'file') {
         files = document.getElementById('fileInput').files;
