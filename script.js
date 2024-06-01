@@ -101,6 +101,9 @@ document.getElementById('uploadForm').addEventListener('submit', async (event) =
 
 async function uploadFile(file) {
     try {
+        const fileSize = file.size;
+        console.log(fileSize);
+
         const storageRef = storage.ref('uploads/' + file.name);
         const uploadTask = storageRef.put(file);
 
@@ -126,10 +129,10 @@ async function uploadFile(file) {
                 const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                 progressBar.style.width = progress + '%';
                 progressBar.textContent = Math.floor(progress) + '%';
+
             }, 
             (error) => {
                 console.error('Fehler beim Hochladen der Datei:', error);
-                alert(`Fehler beim Hochladen der Datei ${file.name}. Überprüfen Sie die Konsole für weitere Details.`);
             }, 
             async () => {
                 const downloadURL = await storageRef.getDownloadURL();
