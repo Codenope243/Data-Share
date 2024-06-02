@@ -143,10 +143,8 @@ body {
     flex-direction: column;
     position: absolute;
     align-items: center;
-    margin-left: 75%;
-    margin-right: 0px;
-    margin-top: 1%;
-    margin-bottom: 20%;
+    align-self: flex-end;
+    top: 10px;
     height:625px;
     width: 500px;
     border-radius: 20px 0px 0px 20px;

@@ -109,7 +109,7 @@ async function uploadFile(file) {
         const storageRef = storage.ref('uploads/' + file.name);
         const uploadTask = storageRef.put(file);
 
-        const progressBarContainer = createProgressBarContainer();
+        const progressBarContainer = createProgressBarContainer(uploadTask);
         document.getElementById('progressContainer').appendChild(progressBarContainer.container);
 
         uploadTask.on('state_changed', 
@@ -124,7 +124,7 @@ async function uploadFile(file) {
 }
 
 // Fortschrittsbalken erstellen
-function createProgressBarContainer() {
+function createProgressBarContainer(uploadTask) {
     const container = document.createElement('div');
     container.classList.add('progress-bar-container');
     const progress = document.createElement('div');

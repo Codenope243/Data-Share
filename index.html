@@ -11,21 +11,21 @@
 </head>
 <body>
 
-    <div id="confirme-message-container">
+    <div id="confirme-message-container" aria-live="polite">
         <p id="confirme-message"></p>
     </div>
 
     <h1 id="headline">DATA SHARE</h1>
     <form id="uploadForm">
 
-        <div id="switch-container" onclick="toggleSwitch()">
+        <div id="switch-container" onclick="toggleSwitch()" aria-label="Switch between file and folder upload">
             <img src="icons/file Icon.png" alt="file-icon" class="switch-icons">
             <img src="icons/folder Icon.png" alt="folder-icon" class="switch-icons">
             <div id="switch" style="margin-left: 2px;"></div>
         </div>
 
-        <input type="file" id="fileInput" style="display: none;" multiple>
-        <input type="file" id="folderInput" style="display: block;" webkitdirectory >
+        <input type="file" id="fileInput" multiple style="display: none;">
+        <input type="file" id="folderInput" webkitdirectory  >
         <button id="Confirm-button" type="submit">Dateien hochladen</button>
     </form>
 
@@ -43,7 +43,7 @@
                 <tr id="table-head">
                     <th>Dateiname</th>
                     <th>Dateigröße</th>
-                    <th>Downloade</th>
+                    <th>Download</th>
                 </tr>
             </thead>
             <tbody id="fileList">
@@ -59,6 +59,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-
-
-
