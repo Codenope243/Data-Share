@@ -142,6 +142,15 @@ async function uploadFile(file) {
                     size: file.size // Die Dateigröße wird hier hinzugefügt
                 });
 
+            const uploadeConfirmMessage = document.getElementById("confirme-message-container")
+            const confirmeMessage = document.getElementById("confirme-message")
+                confirmeMessage.innerHTML=file.name + " erfolgreich hochgeladen" 
+                uploadeConfirmMessage.style.marginTop = "-52%"
+                
+                setTimeout(() => {
+                    uploadeConfirmMessage.style.marginTop = "-100%";
+                }, 2000); // 2000ms = 2s
+
                 loadFiles();
                 progressBarContainer.remove();
             }
