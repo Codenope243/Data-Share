@@ -231,6 +231,25 @@ async function loadFiles() {
     });
 }
 
+function refreshFiles() {
+    const refreshButton = document.getElementById("file-list-reload-button");
+
+    // Aktuelle Rotation abfragen
+    let currentRotation = parseFloat(getComputedStyle(refreshButton).getPropertyValue('--rotation') || 0);
+
+    // Nächste Rotation um 360 Grad erhöhen
+    currentRotation += 360;
+
+    // Rotationseigenschaft setzen
+    refreshButton.style.transition = "transform ease-in-out 0.5s";
+    refreshButton.style.transform = `rotate(${currentRotation}deg)`;
+    refreshButton.style.setProperty('--rotation', currentRotation); // Speichern der aktuellen Rotation für die nächste Verwendung
+
+    // Konsolenausgabe und Dateien aktualisieren
+    loadFiles();
+}
+
+
 // Dateigröße formatieren
 function formatFileSize(bytes) {
     if (bytes === undefined || bytes === null) return 'Unbekannt';
