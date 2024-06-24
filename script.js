@@ -14,10 +14,10 @@ firebase.initializeApp(firebaseConfig);
 const storage = firebase.storage();
 const db = firebase.firestore();
 
-const MAX_CONCURRENT_UPLOADS = 3;  // Maximale Anzahl gleichzeitiger Uploads
+const MAX_CONCURRENT_UPLOADS = 1;  // Maximale Anzahl gleichzeitiger Uploads
 let currentUploads = 0;  // Aktuelle Anzahl laufender Uploads
 
-let uploadType = "";
+let uploadType = "folder";
 
 // Umschalten zwischen Datei- und Ordner-Upload
 function toggleSwitch() {
@@ -65,6 +65,7 @@ document.getElementById('uploadForm').addEventListener('submit', async (event) =
     } else {
         await handleFileUploads(files);
     }
+    await loadFiles(); // Lade die Dateiliste nur einmal nach dem Upload
 });
 
 // Handhabung des Ordneruploads
@@ -154,14 +155,13 @@ function updateProgress(snapshot, progress) {
 // Upload abschließen
 async function finalizeUpload(file, storageRef, progressBarContainer) {
     const downloadURL = await storageRef.getDownloadURL();
-    await db.collection('files').add({
+    await db.collection('files').doc(file.name).set({
         name: file.name,
         url: downloadURL,
         size: file.size
     });
 
     showUploadSuccessMessage(file.name);
-    loadFiles();
     progressBarContainer.remove();
 }
 
@@ -195,21 +195,25 @@ function createFileContainer(fileName) {
 }
 
 // Dateien laden und anzeigen
-async function loadFiles() {
-    try {
-        const snapshot = await db.collection('files').get();
-        const fileList = document.getElementById('fileList');
-        fileList.innerHTML = ''; // Vorherige Liste löschen
+let cachedFiles = [];
 
-        snapshot.forEach(doc => {
-            const file = doc.data();
-            const listItem = createFileListItem(file);
-            fileList.appendChild(listItem);
-        });
-    } catch (error) {
-        console.error('Fehler beim Laden der Dateien:', error);
-        alert('Fehler beim Laden der Dateien. Überprüfen Sie die Konsole für weitere Details.');
+async function loadFiles() {
+    if (cachedFiles.length === 0) {
+        try {
+            const snapshot = await db.collection('files').get();
+            cachedFiles = snapshot.docs.map(doc => doc.data());
+        } catch (error) {
+            console.error('Fehler beim Laden der Dateien:', error);
+            alert('Fehler beim Laden der Dateien. Überprüfen Sie die Konsole für weitere Details.');
+        }
     }
+    const fileList = document.getElementById('fileList');
+    fileList.innerHTML = ''; // Vorherige Liste löschen
+
+    cachedFiles.forEach(file => {
+        const listItem = createFileListItem(file);
+        fileList.appendChild(listItem);
+    });
 }
 
 // Dateigröße formatieren
@@ -261,5 +265,7 @@ function downloadFile(url, fileName) {
     document.body.removeChild(link);
 }
 
-// Initiales Laden der Dateien bei DOMContentLoaded
-document.addEventListener('DOMContentLoaded', loadFiles);
+// Dateien beim Laden der Seite laden
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadFiles();
+});
