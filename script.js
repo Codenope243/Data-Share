@@ -207,12 +207,27 @@ async function loadFiles() {
             alert('Fehler beim Laden der Dateien. Überprüfen Sie die Konsole für weitere Details.');
         }
     }
+
+    // Sortiere Dateien nach Dateinamenserweiterung
+    const sortedFiles = {
+        '.zip': cachedFiles.filter(file => file.name.endsWith('.zip')),
+        '.txt': cachedFiles.filter(file => file.name.endsWith('.txt')),
+        '.mp4': cachedFiles.filter(file => file.name.endsWith('.mp4')),
+        // Füge weitere Erweiterungen nach Bedarf hinzu
+        'Andere': cachedFiles.filter(file => !file.name.endsWith('.zip') && !file.name.endsWith('.txt') && !file.name.endsWith('.mp4'))
+    };
+
     const fileList = document.getElementById('fileList');
     fileList.innerHTML = ''; // Vorherige Liste löschen
 
-    cachedFiles.forEach(file => {
-        const listItem = createFileListItem(file);
-        fileList.appendChild(listItem);
+    // Füge sortierte Dateien der Dateiliste hinzu
+    Object.keys(sortedFiles).forEach(extension => {
+        if (sortedFiles[extension].length > 0) {
+            sortedFiles[extension].forEach(file => {
+                const listItem = createFileListItem(file);
+                fileList.appendChild(listItem);
+            });
+        }
     });
 }
 
